@@ -5,7 +5,7 @@ import numpy as np
 import positivestable as ps
 
 class SupStable:
-    def __init__(self, alpha, beta):
+    def __init__(self, alpha, beta, generator = None):
         self.alpha = alpha
         self.beta = beta
         self.Delta_0 = 0
@@ -15,6 +15,7 @@ class SupStable:
         self.ES_1_a = self.dPos.mellin(19*alpha/20)
         self.calc_params()
         self.ES_1_gamma = self.dPos.mellin(self.gamma)
+        self.gen = np.random.default_rng() if generator == None else generator
 
     def calc_eta(self):
         alpha = self.alpha
@@ -79,7 +80,8 @@ class SupStable:
 
     def algorithm_3(self, conditional, shift = None): #shift = m-k >= m_star - 1
         n = self.m_star - 1 if shift == None else shift
-        U = np.random.uniform()
+        gen = self.gen
+        U = gen.uniform()
         S = []
         while True:
             n = n + 1
@@ -119,13 +121,14 @@ class SupStable:
     def sample_C(self, x):
         #returns C = [C_0, C_-1, C_-2, ..., C_Tx]
         C = [0]
+        gen = self.gen
         if x > 0:
             t = 0
             while True:
                 if C[t] - C[0] > x:
                     return np.array(C)
                 t += 1
-                F = self.d - np.random.exponential()/(self.alpha*self.rho+self.eta)
+                F = self.d - gen.exponential()/(self.alpha*self.rho+self.eta)
                 C.append(C[t-1] + F)
         else:
             t = 0
@@ -133,7 +136,7 @@ class SupStable:
                 if C[t] - C[0] < x:
                     return np.array(C)
                 t += 1
-                F = self.d - np.random.exponential()/(self.alpha*self.rho)
+                F = self.d - gen.exponential()/(self.alpha*self.rho)
                 C.append(C[t-1] + F)
     
     def calc_T_y(self, C, y):
@@ -166,8 +169,9 @@ class SupStable:
     def algorithm_4(self, x, x_prime):
         assert x_prime > x > 0, "algorithm_4 : x = "+str(x)+" x_prime = "+str(x_prime)+"\n"
         m = np.exp(-x_prime-self.d)
+        gen = self.gen
         while True:
-            T = -np.log(np.random.uniform(m, 1))/self.eta
+            T = -np.log(gen.uniform(m, 1))/self.eta
             if T <= x:
                 return 0
             C = self.sample_C(T)
@@ -177,9 +181,10 @@ class SupStable:
 
     def algorithm_5(self, x, x_prime):
         assert x_prime > x > 0, "x ="+str(x)+" x_prime ="+str(x_prime)
+        gen = self.gen
         while True:
             C = self.sample_C(x)
-            U = np.random.uniform()
+            U = gen.uniform()
             if x_prime == np.inf:
                 ind = 1
             else:
@@ -201,13 +206,14 @@ class SupStable:
     def algorithm_8(self, F):
         alpha, rho, d = self.alpha, self.rho, self.d
         U, Lambda = [], []
+        gen = self.gen
         for k in range(len(F)):
-            T = 1 + np.random.poisson(-alpha*(F[k]-d)*(1-rho))
+            T = 1 + gen.poisson(-alpha*(F[k]-d)*(1-rho))
             if T - 1 == 0:
                 U.append(np.exp(alpha*(F[k]-d)))
                 Lambda.append(1)
             else:
-                L = np.random.beta(1, T-1)
+                L = gen.beta(1, T-1)
                 U.append(np.exp(alpha*(F[k]-d)*L))
                 Lambda.append(np.exp((1-L)*alpha*(F[k]-d)))        
         return (U, Lambda)
@@ -216,13 +222,14 @@ class SupStable:
         #Delta[n] = Delta_n; C[n] = C_{-n}; U, S, Lambda[-n-1] = U_{n}, S_{n}, Lambda_{n}
         Delta = [self.Delta_0]
         x, t, s, m, n = np.inf, 0, Delta[0], Delta[0] + 1, Delta[0] + 1
-        U = np.random.uniform(size = -Delta[0])
-        W = np.random.uniform(size = -Delta[0])
-        Lambda = 1 + np.random.binomial(1, 1-self.rho, size = -Delta[0]) * (np.power(np.random.uniform(size = -Delta[0]), 1/(self.alpha * self.rho)) - 1 )
+        gen = self.gen
+        U = gen.uniform(size = -Delta[0])
+        W = gen.uniform(size = -Delta[0])
+        Lambda = 1 + gen.binomial(1, 1-self.rho, size = -Delta[0]) * (np.power(gen.uniform(size = -Delta[0]), 1/(self.alpha * self.rho)) - 1 )
         S = self.dPos.rv(size = -Delta[0])
-        lag_U = np.random.uniform(size = -Delta[0])
-        lag_W = np.random.uniform(size = -Delta[0])
-        lag_Lambda = 1 + np.random.binomial(1, 1-self.rho, size = -Delta[0]) * (np.power(np.random.uniform(size = -Delta[0]), 1/(self.alpha * self.rho)) - 1 )
+        lag_U = gen.uniform(size = -Delta[0])
+        lag_W = gen.uniform(size = -Delta[0])
+        lag_Lambda = 1 + gen.binomial(1, 1-self.rho, size = -Delta[0]) * (np.power(gen.uniform(size = -Delta[0]), 1/(self.alpha * self.rho)) - 1 )
         lag_S = self.dPos.rv(size = -Delta[0])
         C = np.array([0])
         R = np.array([0])
@@ -237,7 +244,7 @@ class SupStable:
                 countb += 1
                 if len(C) < -Delta[t]:
                     while len(C) < -Delta[t]:
-                        C = np.append(C, C[-1] + self.d - np.random.exponential()/(self.alpha*self.rho+self.eta))
+                        C = np.append(C, C[-1] + self.d - gen.exponential()/(self.alpha*self.rho+self.eta))
                 C_end = C[-1] + self.algorithm_6(x = 2*self.kappa, x_prime = x-C[-1])[1:]
                 C = np.concatenate((C, C_end))
                 Delta.append(-(len(C)-1))
@@ -259,7 +266,7 @@ class SupStable:
             for i in range(s, chi, -1):
                 F_end[-(i-s)] = C[-i] - C[-(i+1)]   #F_i = C_i - C_{i+1}
             U_end, Lambda_end = self.algorithm_8(F_end)
-            W_end = np.random.uniform(size = np.size(U_end))   
+            W_end = gen.uniform(size = np.size(U_end))   
             U = np.concatenate((U, U_end))
             Lambda = np.concatenate((Lambda, Lambda_end))
             W = np.concatenate((W, W_end))

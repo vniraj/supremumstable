@@ -4,7 +4,7 @@ from scipy.special import gamma
 import unilateralstable as us
 
 class PositiveStable:
-    def __init__(self, alpha, beta):
+    def __init__(self, alpha, beta, generator = None):
         self.alpha = alpha
         self.beta = beta
         assert (0 < self.alpha <= 2 and -1 <= self.beta <= 1) and not (0 < alpha <= 1 and beta == -1), "Invalid parameters"
@@ -13,27 +13,29 @@ class PositiveStable:
         else:
             self.theta = beta*(1 if alpha <= 1 else (alpha - 2)/alpha)
             self.rho = (1 + beta*(1 if alpha <= 1 else (alpha - 2)/alpha))/2
+        self.gen = np.random.default_rng() if generator == None else generator
 
     def rv(self, size=1):
         n = size
         ar = self.alpha * self.rho
+        gen = self.gen
         if self.beta == 1 and self.alpha == 1:
             return 1
         elif self.beta == 1 and self.alpha < 1:
-            u1 = np.random.uniform(0, np.pi, size = n)
-            e1 = np.random.exponential(size=n)
+            u1 = gen.uniform(0, np.pi, size = n)
+            e1 = gen.exponential(size=n)
             s1 = np.sin(u1)
             return (np.sin(self.alpha * u1) / s1) * np.power(s1 * e1 / np.sin((1 -self.alpha) * u1) , 1 - 1 /self.alpha)
         elif self.beta == -1 and self.alpha > 1:
-            u1 = np.random.uniform(0, np.pi, size=n)
-            e1 = np.random.exponential(size=n)
+            u1 = gen.uniform(0, np.pi, size=n)
+            e1 = gen.exponential(size=n)
             s1 = np.sin(u1)
             return np.power((np.sin(self.rho * u1) / s1) * np.power((s1 * e1 / np.sin((1 - self.rho) * u1)) , (1 - 1 /self.rho)) , (-self.rho))
         else:
-            u1 = np.random.uniform(0, np.pi, size=n)
-            u2 = np.random.uniform(0, np.pi, size=n)
-            e1 = np.random.exponential(size=n)
-            e2 = np.random.exponential(size=n)
+            u1 = gen.uniform(0, np.pi, size=n)
+            u2 = gen.uniform(0, np.pi, size=n)
+            e1 = gen.exponential(size=n)
+            e2 = gen.exponential(size=n)
             s1 = np.sin(u1)
             s2 = np.sin(u2)
             return np.power( (np.sin(ar * u1) / s1) * np.power(s1 * e1 / np.sin((1 - ar) * u1), (1 - 1 /ar)) / ((np.sin(self.rho * u2) / s2) * np.power(s2 * e2 / np.sin((1 - self.rho) * u2), (1 - 1 /self.rho)) ), self.rho)
@@ -94,4 +96,10 @@ class PositiveStable:
         if (self.alpha > 1 and self.beta == -1) and self.alpha == 2:
             return gamma(1 + x)/gamma(1 + x/self.alpha)
         return (np.sin(np.pi * self.rho * x) * gamma(1 + x)) /(self.alpha * self.rho * np.sin(np.pi * x / self.alpha) * gamma(1 + x / self.alpha))
-         
+    
+    def mgf(self, x):
+        l = 15
+        if x == 0:
+            return 1
+        if self.alpha == 2:
+            return 2 * np.exp(np.power(x, 2) / 4)*...
