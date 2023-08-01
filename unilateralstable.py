@@ -26,7 +26,7 @@ class UnilateralStable:
                 integral[i] = 1 if eks[i] >= 1 else 0
                 continue
             C = self.alpha/(1-self.alpha)
-            integral[i] = integrate.quadrature(lambda u: np.exp(-self.zolotarev(u)/np.power(np.abs(eks[i]), C))/np.pi, 0, np.pi, maxiter=1000)[0]
+            integral[i] = integrate.fixed_quad(lambda u: np.exp(-self.zolotarev(u)/np.power(np.abs(eks[i]), C))/np.pi, 0, np.pi, n = 100)[0]
         if np.any(integral < 0) or np.any(integral > 1):
             print('UnilateralStable: invalid cdf: ', integral[np.where(integral < 0 or integral > 1)])
         return integral

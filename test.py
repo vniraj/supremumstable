@@ -2,23 +2,23 @@ from supremumstable import SupStable
 from positivestable import PositiveStable
 from scipy.stats import ks_2samp
 import numpy as np
+import time
 
-(alpha, beta) = (1.5, -1)
-n = 1000
-S = np.array([])
-P = np.array([])
+for i in range(1,10):
+    (alpha, beta) = (0.8, 0.3)
+    n = 10000
+    S = np.array([])
+    P = np.array([])
 
-stablesup = SupStable(alpha, beta)
-stablesup.set_params(omega=(2/3,1/3,.95*alpha,3,-50,12))
-stablepos = PositiveStable(alpha, beta)
+    stablesup = SupStable(alpha, beta)
+    stablesup.set_params(omega=(2/3,1/3,.95*alpha,3,-50,12))
 
-for i in range(1):
-    S_end = stablesup.rv(n, show_progress=True)
-    P_end = stablepos.rv(n)
-    print(i, ' KS ', ks_2samp(S_end, P_end))
-    S = np.append(S, S_end)
-    P = np.append(P, P_end)
+    time_0 = time.time()
+    S = stablesup.rv(n)
+    print(time.time() - time_0)
 
-print('KS Total',ks_2samp(S, P))
 
+    stablepos = PositiveStable(alpha, beta)
+    P = stablepos.rv(n)
+    print('KS ', ks_2samp(S, P))
 

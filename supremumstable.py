@@ -1,7 +1,7 @@
 
 from scipy.special import lambertw
 import numpy as np
-
+import time
 import positivestable as ps
 
 class SupStable:
@@ -9,13 +9,19 @@ class SupStable:
         self.alpha = alpha
         self.beta = beta
         self.Delta_0 = 0
-        self.dPos = ps.PositiveStable(alpha, beta)
+        self.gen = np.random.default_rng() if generator == None else generator
+        self.dPos = ps.PositiveStable(alpha, beta, generator = self.gen)
         self.rho = self.dPos.rho
         self.theta = self.dPos.theta
         self.ES_1_a = self.dPos.mellin(19*alpha/20)
         self.calc_params()
         self.ES_1_gamma = self.dPos.mellin(self.gamma)
-        self.gen = np.random.default_rng() if generator == None else generator
+        
+    def calc_cdf1(self): #to save time during first iteration of algorithm_3
+        n = -self.Delta_0-1
+        n += 1
+        aux = np.exp(self.delta*n)
+        self.cdf1 = self.dPos.cdf(aux)
 
     def calc_eta(self):
         alpha = self.alpha
@@ -39,6 +45,7 @@ class SupStable:
         assert self.gamma > 0
         assert self.Delta_0 < 0 , 'Delta_0 = '+str(self.Delta_0)
         assert isinstance(self.Delta_0, int) , 'Delta_0 = '+str(self.Delta_0)
+        self.calc_cdf1()
 
     def calc_params(self):
         alpha = self.alpha
@@ -51,6 +58,7 @@ class SupStable:
         self.Delta_0 = -40
         temp = np.floor((60/19)*rho*np.log(self.ES_1_a))
         self.m_star = 12 + (temp if temp > 0 else 0)
+        self.calc_cdf1()
 
     def print_params(self):
         #code to print alpha, beta, rho, delta, gamma, kappa, Delta_0, m_star)
@@ -87,7 +95,7 @@ class SupStable:
             n = n + 1
             aux = np.exp(self.delta*n)
             aux0 = np.exp(self.delta*(n+1))
-            cdf1 = self.dPos.cdf(aux)
+            cdf1 = self.cdf1 if not conditional else self.dPos.cdf(aux) #conditional tells whether it's the first iteration of alg_9
             if conditional:
                 cdf0 = self.dPos.cdf(aux0)
                 if cdf0 == 0:
@@ -113,7 +121,6 @@ class SupStable:
             else:
                 S_temp = self.dPos.rv()
                 while S_temp[0] > aux:
-                    print('wee', S_temp, aux)
                     S_temp = self.dPos.rv()
                 S = np.concatenate((S, S_temp))
                 U = U/p
@@ -188,7 +195,7 @@ class SupStable:
             if x_prime == np.inf:
                 ind = 1
             else:
-                ind = 1 - self.algorithm_4(x_prime - C[-1], np.inf, self.alpha, self.rho, self.d)
+                ind = 1 - self.algorithm_4(x_prime - C[-1], np.inf)
             if U <= np.exp(-self.eta*C[-1]) and ind == 1:
                 return C
             

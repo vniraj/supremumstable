@@ -14,6 +14,7 @@ class PositiveStable:
             self.theta = beta*(1 if alpha <= 1 else (alpha - 2)/alpha)
             self.rho = (1 + beta*(1 if alpha <= 1 else (alpha - 2)/alpha))/2
         self.gen = np.random.default_rng() if generator == None else generator
+        self.u_stable = us.UnilateralStable(self.alpha, generator = self.gen)
 
     def rv(self, size=1):
         n = size
@@ -50,7 +51,7 @@ class PositiveStable:
     def cdf(self, x):
         if self.alpha == 1 and self.beta == 1:
             return np.where(x >= 1, 1, 0)
-        m = 1000
+        m = 100
         l = 15
         delta = 1
         pir = np.pi * self.rho
@@ -81,8 +82,7 @@ class PositiveStable:
                 nodes2 = 1 / np.power(1 - nodes, 2)
                 pir = np.pi * self.rho
                 mat = np.abs(x)*nodes1
-                u_stable = us.UnilateralStable(self.alpha)
-                mat = u_stable.cdf(mat)
+                mat = self.u_stable.cdf(mat)
                 cauchy_pdf = 1 / (np.pi * np.sin(pir) * (1 + np.power((nodes1 + np.cos(pir))/np.sin(pir), 2)))
                 fC = nodes2 * cauchy_pdf
                 cdf = np.sum(fC * mat * weights)/self.rho
