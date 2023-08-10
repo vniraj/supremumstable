@@ -10,12 +10,38 @@ class UnilateralStable:
         assert np.abs(self.beta) == 1
         self.gen = np.random.default_rng() if generator == None else generator
 
+    def minimum(self):
+        return self.beta if self.alpha == 1 else (0 if self.beta == 1 else -np.inf)
+
+    def params(self):
+        return (self.alpha, self.beta)
+    
+    def maximum(self):
+        return self.beta if self.alpha == 1 else (np.inf if self.beta == 1 else 0)
+    
+    def insupport(self, x):
+        return x == self.beta if self.alpha == 1 else x*self.beta >= 0
+
     def zolotarev(self, u):
         C = self.alpha/(1-self.alpha)
-        A = pow(np.sin(self.alpha*u),C)*np.sin((1-self.alpha)*u)/pow(np.sin(u),1+C)
+        A = np.power(np.sin(self.alpha*u),C)*np.sin((1-self.alpha)*u)/pow(np.sin(u),1+C)
         return A
 
-    def cdf(self, eks):
+    def pdf(self, x, degree = 1000):
+        if self.beta == -1:
+            return UnilateralStable(self.alpha, 1).pdf(-x)
+        if x < 0:
+            return 0
+        elif x == 0:
+            return gamma(1 + 1/self.alpha) * np.sin(np.pi*self.rho)/(self.rho * np.pi)
+        c = 1/self.alpha - 1
+        C = self.alpha/(1-self.alpha)
+        C1 = -C - 1
+        integral = integrate.fixed_quad(lambda u: -self.zolotarev(u)*np.exp(-self.zolotarev(u)/np.power(x, C)), 0, np.pi, n = degree)[0]
+        integral = integral/np.pi * np.power(x, C1)/C1
+        return integral
+
+    def cdf(self, eks, degree = 1000):
         integral = np.zeros(np.size(eks))
         for i in range(np.size(eks)): 
             if self.beta == -1:
@@ -26,7 +52,7 @@ class UnilateralStable:
                 integral[i] = 1 if eks[i] >= 1 else 0
                 continue
             C = self.alpha/(1-self.alpha)
-            integral[i] = integrate.fixed_quad(lambda u: np.exp(-self.zolotarev(u)/np.power(np.abs(eks[i]), C))/np.pi, 0, np.pi, n = 100)[0]
+            integral[i] = (1/np.pi)*integrate.fixed_quad(lambda u: np.exp(-self.zolotarev(u)/np.power(np.abs(eks[i]), C)), 0, np.pi, n = degree)[0]
         if np.any(integral < 0) or np.any(integral > 1):
             print('UnilateralStable: invalid cdf: ', integral[np.where(integral < 0 or integral > 1)])
         return integral

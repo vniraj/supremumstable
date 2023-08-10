@@ -8,6 +8,7 @@ class SupStable:
     def __init__(self, alpha, beta, generator = None):
         self.alpha = alpha
         self.beta = beta
+        assert 0 < self.alpha <= 2 and -1 <= self.beta <= 1 and not (0 < alpha <= 1 and beta == -1)
         self.Delta_0 = 0
         self.gen = np.random.default_rng() if generator == None else generator
         self.dPos = ps.PositiveStable(alpha, beta, generator = self.gen)
@@ -17,6 +18,24 @@ class SupStable:
         self.calc_params()
         self.ES_1_gamma = self.dPos.mellin(self.gamma)
         
+    def params(self):
+        return (self.alpha, self.beta, self.theta, self.rho)
+    
+    def all_params(self):
+        return (self.alpha, self.beta, self.theta, self.rho, self.d, self.delta, self.gamma, self.kappa, self.Delta_0, self.m_star, self.eta)
+
+    def minimum(self):
+        return 0 if self.beta == -1 and self.alpha <= 1 else 1 if self.alpha == 1 else 0
+    
+    def maximum(self):
+        return 0 if self.beta == -1 and self.alpha <= 1 else 1 if self.alpha == 1 else np.inf
+    
+    def insupport(self, x):
+        return x == 0 if self.beta == -1 and self.alpha <= 1 else x >= 0
+    
+    def mean(self):
+        return self.alpha*self.rho*self.dPos.mean()
+
     def calc_cdf1(self): #to save time during first iteration of algorithm_3
         n = -self.Delta_0-1
         n += 1
@@ -41,8 +60,8 @@ class SupStable:
         else:
             self.eta = eta
         assert 0 < self.delta < self.d < 1/(self.alpha*self.rho)
-        assert self.kappa > max(np.log(2)/(3*self.eta), 1/(self.alpha*self.rho))
-        assert self.gamma > 0
+        assert self.kappa >= 0
+        assert 0 < self.gamma < self.alpha
         assert self.Delta_0 < 0 , 'Delta_0 = '+str(self.Delta_0)
         assert isinstance(self.Delta_0, int) , 'Delta_0 = '+str(self.Delta_0)
         self.calc_cdf1()
