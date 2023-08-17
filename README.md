@@ -9,7 +9,7 @@ from supremumstable import SupStable
 
 (alpha, beta) = (2, 0)
 SupS = SupStable(2,0)
-sample = SupS.rv(n = 100)
+sample = SupS.rv(100)
 ```
 
 ## Tests
