@@ -11,7 +11,7 @@ class SupStable:
         assert 0 < self.alpha <= 2 and -1 <= self.beta <= 1 and not (0 < alpha <= 1 and beta == -1)
         self.Delta_0 = 0
         self.gen = np.random.default_rng() if generator == None else generator
-        self.dPos = ps.PositiveStable(alpha, beta, generator = self.gen)
+        self.dPos = ps.PosStable(alpha, beta, generator = self.gen)
         self.rho = self.dPos.rho
         self.theta = self.dPos.theta
         self.ES_1_a = self.dPos.mellin(19*alpha/20)
@@ -319,10 +319,10 @@ class SupStable:
                         X_0 = self.func_psi(X_0, theta = (lag_S[i], lag_U[i], lag_W[i], lag_Lambda[i]))
                     return X_0
                 
-    def rv(self, n=1, show_progress = False):
-        sample = np.zeros(n)
+    def rv(self, size=1, show_progress = False):
+        sample = np.zeros(size)
         i = 0
-        while i < n:
+        while i < size:
             if i%10 == 0 and show_progress:
                 print(i)
             sample[i] = self.algorithm_9()

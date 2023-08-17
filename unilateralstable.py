@@ -2,7 +2,7 @@ import numpy as np
 from scipy import integrate
 from scipy.special import gamma
 
-class UnilateralStable:
+class UniStable:
     def __init__(self, alpha, beta = 1, generator = None):
         self.alpha = alpha
         self.beta = beta
@@ -29,7 +29,7 @@ class UnilateralStable:
 
     def pdf(self, x, degree = 1000):
         if self.beta == -1:
-            return UnilateralStable(self.alpha, 1).pdf(-x)
+            return UniStable(self.alpha, 1).pdf(-x)
         if x < 0:
             return 0
         elif x == 0:
@@ -45,7 +45,7 @@ class UnilateralStable:
         integral = np.zeros(np.size(eks))
         for i in range(np.size(eks)): 
             if self.beta == -1:
-                temp_US = UnilateralStable(self.alpha, 1)
+                temp_US = UniStable(self.alpha, 1)
                 integral[i] = temp_US.cdf(-eks[i])
                 continue
             if self.alpha == 1:
@@ -54,7 +54,7 @@ class UnilateralStable:
             C = self.alpha/(1-self.alpha)
             integral[i] = (1/np.pi)*integrate.fixed_quad(lambda u: np.exp(-self.zolotarev(u)/np.power(np.abs(eks[i]), C)), 0, np.pi, n = degree)[0]
         if np.any(integral < 0) or np.any(integral > 1):
-            print('UnilateralStable: invalid cdf: ', integral[np.where(integral < 0 or integral > 1)])
+            print('UniStable: invalid cdf: ', integral[np.where(integral < 0 or integral > 1)])
         return integral
     
     def rv(self, size=1):
@@ -69,7 +69,7 @@ class UnilateralStable:
     
     def mgf(self, x):
         if self.beta == -1:
-            return UnilateralStable(self.alpha).mgf(-x)
+            return UniStable(self.alpha).mgf(-x)
         x = np.array(x)
         if self.alpha == 1:
             return np.exp(x)
@@ -85,7 +85,7 @@ class UnilateralStable:
 
     def mellin(self, x):
         if self.beta == -1:
-            return UnilateralStable(self.alpha).mellin(-x)
+            return UniStable(self.alpha).mellin(-x)
         if x >= self.alpha:
             return np.inf
         return gamma(1 - x/self.alpha)/gamma(1 - x)

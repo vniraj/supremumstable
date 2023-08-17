@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.special import gamma
-from positivestable import PositiveStable
+from positivestable import PosStable
 
 class Stable:
     def __init__(self, alpha, beta, generator = None):
@@ -40,7 +40,7 @@ class Stable:
             return self.rho * gamma (1+x)/gamma(1 + x/self.alpha)
         return self.rho * (np.sin(np.pi*self.rhp*x)*gamma(1+x))/(self.alpha*self.rho*np.sin(np.pi*x/self.alpha)*gamma(1 + x/self.alpha))
     
-    def rv(self, size):
+    def rv(self, size=1):
         zeta = -self.beta * np.tan(np.pi*self.alpha/2)
         xi = np.arctan(-zeta)/self.alpha if self.alpha != 1 else np.pi/2
         U = self.gen.uniform(-np.pi/2, np.pi/2, size=size)
@@ -56,10 +56,10 @@ class Stable:
         return np.power(np.power(np.sin(a*y + 1), a) / np.cos(y), 1/(1-a)) * np.cos((a-1)*y + t)
     
     def pdf(self, x):
-        return gamma(1 + 1/self.alpha) * np.sin(np.pi * self.rho)/np.pi if x == 0 else (PositiveStable(self.alpha, self.beta, self.gen).pdf(x)*self.rho if x > 0 else PositiveStable(self.alpha, -self.beta, self.gen).pdf(-x)*(1-self.rho))
+        return gamma(1 + 1/self.alpha) * np.sin(np.pi * self.rho)/np.pi if x == 0 else (PosStable(self.alpha, self.beta, self.gen).pdf(x)*self.rho if x > 0 else PosStable(self.alpha, -self.beta, self.gen).pdf(-x)*(1-self.rho))
     
     def cdf(self, x):
-        return self.rho + self.rho*PositiveStable(self.alpha, self.beta, self.gen).cdf(x) - (1 - self.rho)*PositiveStable(self.alpha, -self.beta, self.gen).cdf(-x)
+        return self.rho + self.rho*PosStable(self.alpha, self.beta, self.gen).cdf(x) - (1 - self.rho)*PosStable(self.alpha, -self.beta, self.gen).cdf(-x)
     
     def mgf(self, x):
         if x == 0:

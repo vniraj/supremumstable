@@ -4,7 +4,7 @@ from scipy.special import gamma
 import scipy.integrate as integrate
 import unilateralstable as us
 
-class PositiveStable:
+class PosStable:
     def __init__(self, alpha, beta, generator = None):
         self.alpha = alpha
         self.beta = beta
@@ -15,7 +15,7 @@ class PositiveStable:
             self.theta = beta*(1 if alpha <= 1 else (alpha - 2)/alpha)
             self.rho = (1 + beta*(1 if alpha <= 1 else (alpha - 2)/alpha))/2
         self.gen = np.random.default_rng() if generator == None else generator
-        self.u_stable = us.UnilateralStable(self.alpha, generator = self.gen)
+        self.u_stable = us.UniStable(self.alpha, generator = self.gen)
 
     def params(self):
         return (self.alpha, self.beta, self.theta, self.rho)
