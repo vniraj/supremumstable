@@ -1,7 +1,6 @@
 
 from scipy.special import lambertw
 import numpy as np
-import time
 import positivestable as ps
 
 class SupStable:
