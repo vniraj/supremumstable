@@ -3,6 +3,7 @@
 SupStable is a Python Module for exact simulation of Suprema of Stable Processes by implementing the main algorithm from [[1]](#1). It also has additional functions related to Stable, Unilateral Stable, and Positive Stable distributions. 
 
 ## Usage
+Copy the files supremumstable.py, positivestable.py, unilateralstable.py, and stable.py in the project folder.
 To generate sample of size 100 of supremum of a stable process with parameters (alpha, beta)
 ```python
 from supremumstable import SupStable
