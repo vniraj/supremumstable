@@ -15,7 +15,7 @@ sample = SupS.rv(100)
 ## Tests
 
 The following tests can be done to verify the validity of the algorithm, based on the Kolmogorov-Smirnov 2-sample (or 1-sample) Test.
-#### Brownian Motion
+### Brownian Motion
 For (alpha, beta) = (2, 0), the stable process aligns with the Brownian motion[[3]](#3). Thus, SupStable is tested as:
 ```python
 from scipy.stats import norm, ks_1samp
@@ -35,7 +35,7 @@ ssup = SupStable(alpha, beta, generator=gen) #to set seed, a generator with the 
 S = ssup.rv(10**4)
 print(ks_1samp(S/np.sqrt(2), supB_cdf)) #pvalue = 0.957 
 ```
-#### Cauchy Process
+### Cauchy Process
 
 For (alpha, beta) = (1, 0), the stable process aligns with a Cauchy process.[[3]](#3)
 
@@ -69,7 +69,7 @@ from scipy.stats import ks_2samp
 print(ks_2samp(S, C)) #pvalue = 0.863
 ```
 
-#### Spectrally Negative Infinite Variation Stable Process
+### Spectrally Negative Infinite Variation Stable Process
 For beta = -1, alpha > 1, the distribution of SupStable aligns with PosStable, according to Theorem 3.1 in [[2]](#2)
 
 ```python
