@@ -187,11 +187,11 @@ The following functions can be thought of as their counterparts in `stable.Stabl
 `minimum`, `params`, `maximum`, `insupport`, `pdf`, `cdf`, `rv`, `mgf`, and `mellin`
 
 ## Author and Contributor List
-Vinayak Niraj
-Jorge I. González Cázares
+Vinayak Niraj <br>
 
-Aleksandar Mijatović
-Gerónimo Uribe Bravo
+Jorge I. González Cázares<br>
+Aleksandar Mijatović <br>
+Gerónimo Uribe Bravo <br>
 
 ## References
 <a id="1">[1]</a> 
