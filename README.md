@@ -13,7 +13,7 @@ SupS = SupStable(2,0)
 
 import time
 time_0 = time.time()
-sample = SupS.rv(100)
+sample = SupS.rv(10**4)
 print('Time taken: ',time.time() - time_0, ' seconds')
 ```
 
