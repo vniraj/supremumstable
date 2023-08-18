@@ -74,8 +74,7 @@ print(ks_2samp(S, C)) #pvalue = 0.863
 For beta = -1, alpha > 1, the distribution of SupStable aligns with PosStable, according to Theorem 3.1 in [[2]](#2)
 
 ```python
-from supremumstable import SupStable
-from positivestable import PosStable
+from supremumstable import SupStable, PosStable
 from scipy.stats import ks_2samp
 import numpy as np
 
@@ -94,7 +93,7 @@ print(ks_2samp(S, P)) #pvalue = 0.834
 In the below classes, the parameters to the constructor: `alpha`, `beta` are such that `(alpha,beta) ∈ (0,2]×[-1,1]-[0,1]×{-1}` (based on Zolotarev's (C) form of parametrization [[3]](#3).) <br>
 Passing `None` to `generator` initialises it with `numpy.random.default_rng()`. 
 
-### supremumstable.SupStable
+### SupStable
 ```python
 SupStable(alpha, beta, generator = None)
 ```
@@ -131,7 +130,7 @@ prints algorithm parameters
 
 10. `rv(size=1, show_progress=False)` <br>
 returns samples of SupStable of size `size` using `algorithm_9()`
-### stable.Stable
+### Stable
 ```python
 Stable(alpha, beta, generator = None)
 ```
@@ -171,7 +170,7 @@ returns variance of the stable variable
 
 
 
-### unilateralstable.UniStable
+### UniStable
 `beta` is `1` or `-1` and `alpha ∈ (0,2]` in:
 ```python
 UniStable(alpha, beta = 1, generator = None)
@@ -179,7 +178,7 @@ UniStable(alpha, beta = 1, generator = None)
 The following functions can be thought of as their counterparts in `stable.Stable` applied to the Unilateral Stable distribution: <br>
 `minimum`, `params`, `maximum`, `insupport`, `pdf`, `cdf`, `rv`, `mgf`, and `mellin`
 
-### positivestable.PosStable
+### PosStable
 `(alpha,beta) ∈ (0,2]×[-1,1]-[0,1]×{-1}` in:
 ```python
 PosStable(alpha, beta, generator = None)
