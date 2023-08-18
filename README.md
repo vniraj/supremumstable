@@ -186,7 +186,12 @@ PosStable(alpha, beta, generator = None)
 The following functions can be thought of as their counterparts in `stable.Stable` applied to the Unilateral Stable distribution: <br>
 `minimum`, `params`, `maximum`, `insupport`, `pdf`, `cdf`, `rv`, `mgf`, and `mellin`
 
+## Author and Contributor List
+Vinayak Niraj
+Jorge I. González Cázares
 
+Aleksandar Mijatović
+Gerónimo Uribe Bravo
 
 ## References
 <a id="1">[1]</a> 
