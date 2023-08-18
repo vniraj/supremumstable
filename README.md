@@ -4,13 +4,17 @@ supremumstable is a Python Module for exact simulation of Suprema of Stable Proc
 
 ## Usage
 Copy the files supremumstable.py, positivestable.py, unilateralstable.py, and stable.py in the project folder.
-To generate sample of size 100 of supremum of a stable process with parameters (alpha, beta)
+To generate a sample of size 10<sup>4</sup> of supremum of a stable process with parameters (alpha, beta)
 ```python
 from supremumstable import SupStable
 
-(alpha, beta) = (2, 0)
+(alpha, beta) = (1.5, 0.8)
 SupS = SupStable(2,0)
+
+import time
+time_0 = time.time()
 sample = SupS.rv(100)
+print('Time taken: ',time.time() - time_0, ' seconds')
 ```
 
 ## Tests
