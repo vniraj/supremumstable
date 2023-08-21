@@ -1,6 +1,8 @@
 # supremumstable
 
-supremumstable is a Python Module for exact simulation of Suprema of Stable Processes by implementing the main algorithm from [[1]](#1). It also has additional functions related to Stable, Unilateral Stable, and Positive Stable distributions. 
+supremumstable is a Python Module for exact simulation of Suprema of Stable Processes by implementing the main algorithm from [[1]](#1). It also has additional functions related to Stable, Unilateral Stable, and Positive Stable distributions.
+
+For the same implementation in Julia, see [SupStable.jl](https://github.com/jorgeignaciogc/SupStable.jl).
 
 ## Usage
 Copy the files supremumstable.py, positivestable.py, unilateralstable.py, and stable.py in the project folder.
