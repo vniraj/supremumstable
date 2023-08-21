@@ -200,7 +200,7 @@ Vinayak Niraj
 
 ## References
 <a id="1">[1]</a> 
-Cázares, J.I.G., Mijatović, A. and Bravo, G.U. (2019) Exact simulation of the extrema of stable processes, arXiv.org. Available at: https://arxiv.org/abs/1806.01870
+Cázares, J.I.G., Mijatović, A. and Bravo, G.U. (2019) Exact simulation of the extrema of stable processes, Advances in Applied Probability, 51(4), 967-993 (2019). Available at: https://arxiv.org/abs/1806.01870
 
 <a id = "2">[2]</a>
 Michna, Z. (2013) Explicit formula for the supremum distribution of a spectrally negative stable process, Project Euclid. Available at: https://doi.org/10.1214/ECP.v18-2236
