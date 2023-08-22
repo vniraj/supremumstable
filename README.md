@@ -21,7 +21,7 @@ print('Time taken: ',time.time() - time_0, ' seconds') #8.2 seconds
 
 ## Tests
 
-The following tests can be done to verify the validity of the algorithm, based on the Kolmogorov-Smirnov 2-sample (or 1-sample) Test.
+The following tests can be done to verify the validity of the algorithm, based on the [Kolmogorov-Smirnov](https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test) 2-sample (or 1-sample) Test.
 ### Brownian Motion
 For (alpha, beta) = (2, 0), the stable process aligns with the Brownian motion[[3]](#3). Thus, SupStable is tested as:
 ```python
